@@ -113,12 +113,10 @@ const initialState: GameState = {
 export default function Generator() {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const [point, setPoint] = useState(
-    getLocalStorage("point") ? parseInt(getLocalStorage("point") || "1") : 1,
+    getLocalStorage("point") || "1",
   );
   const [hintLength, setHintLength] = useState(
-    getLocalStorage("hint_length")
-      ? parseInt(getLocalStorage("hint_length") || "2")
-      : 2,
+    getLocalStorage("hint_length") || "2",
   );
 
   if (state.status === "start") {
@@ -127,8 +125,8 @@ export default function Generator() {
         <div className="space-y-4">
           <Label>Select Theme Point</Label>
           <RadioGroup
-            value={point.toString()}
-            onValueChange={(value) => setPoint(parseInt(value))}
+            value={point}
+            onValueChange={(value) => setPoint(value)}
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="1" id="point-1" />
@@ -149,14 +147,20 @@ export default function Generator() {
           <Label htmlFor="hint-length">Initial Given Hint Length</Label>
           <Input
             id="hint-length"
-            value={hintLength.toString()}
-            onChange={(e) => setHintLength(parseInt(e.target.value))}
+            value={hintLength}
+            onChange={(e) => setHintLength(e.target.value)}
           />
         </div>
 
         <Button
           onClick={() => {
-            dispatch({ type: "START_GAME", payload: { point, hintLength } });
+            dispatch({
+              type: "START_GAME",
+              payload: {
+                point: parseInt(point) || 1,
+                hintLength: parseInt(hintLength) || 2,
+              },
+            });
           }}
         >
           <CirclePlay className="w-4 h-4" />
