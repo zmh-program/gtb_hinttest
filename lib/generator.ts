@@ -100,3 +100,29 @@ export function generateHintTest(point: number, hint_length: number) {
     matchedAnswers,
   };
 }
+
+export function generateMoreHint(answer: string, hint: string) {
+  // Return original hint if lengths don't match
+  if (answer.length !== hint.length) return hint;
+
+  // Convert strings to arrays for easier manipulation
+  const hintArr = hint.split("");
+  const answerArr = answer.split("");
+
+  // Find all underscore positions in hint
+  const underscorePositions = hintArr
+    .map((char, i) => (char === "_" ? i : -1))
+    .filter((i) => i !== -1);
+
+  // If no underscores left, return original hint
+  if (underscorePositions.length <= 1) return hint;
+
+  // Randomly select one underscore position to reveal
+  const randomIndex = Math.floor(Math.random() * underscorePositions.length);
+  const positionToReveal = underscorePositions[randomIndex];
+
+  // Replace underscore with actual letter from answer
+  hintArr[positionToReveal] = answerArr[positionToReveal];
+
+  return hintArr.join("");
+}

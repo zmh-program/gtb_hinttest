@@ -1,6 +1,6 @@
 "use client";
 
-import { generateHintTest } from "@/lib/generator";
+import { generateHintTest, generateMoreHint } from "@/lib/generator";
 import { useReducer, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +12,10 @@ import {
   CirclePlay,
   Eye,
   RotateCcw,
+  Lightbulb,
 } from "lucide-react";
 import { getLocalStorage, setLocalStorage } from "@/lib/utils";
+
 function getStructure(hint: string | undefined) {
   if (!hint) return "";
   const segements = hint.split(" ");
@@ -27,6 +29,7 @@ type GameState = {
   hintLength: number;
   hint?: string;
   matchedAnswers?: string[];
+  moreHints?: Record<string, string>;
   answer: string;
   foundAnswers: string[];
   showAllAnswers: boolean;
@@ -45,7 +48,8 @@ type GameAction =
   | { type: "SUBMIT_ANSWER"; payload: string }
   | { type: "CHECK_ANSWER" }
   | { type: "SHOW_ALL_ANSWERS" }
-  | { type: "RESET_GAME" };
+  | { type: "RESET_GAME" }
+  | { type: "GET_MORE_HINT"; payload: string };
 
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
@@ -62,6 +66,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         status: "playing",
         hint,
         matchedAnswers,
+        moreHints: {},
         answer: "",
         foundAnswers: [],
         showAllAnswers: false,
@@ -92,6 +97,20 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         status: isComplete ? "won" : "playing",
       };
     }
+    case "GET_MORE_HINT": {
+      const targetAnswer = action.payload;
+      const currentHint = state.moreHints?.[targetAnswer] || state.hint;
+
+      // Generate more hints for the target answer
+      const moreHints = generateMoreHint(targetAnswer, currentHint || "");
+      return {
+        ...state,
+        moreHints: {
+          ...state.moreHints,
+          [targetAnswer]: moreHints,
+        },
+      };
+    }
     case "SHOW_ALL_ANSWERS":
       return { ...state, showAllAnswers: true };
     case "RESET_GAME":
@@ -112,9 +131,7 @@ const initialState: GameState = {
 
 export default function Generator() {
   const [state, dispatch] = useReducer(gameReducer, initialState);
-  const [point, setPoint] = useState(
-    getLocalStorage("point") || "1",
-  );
+  const [point, setPoint] = useState(getLocalStorage("point") || "1");
   const [hintLength, setHintLength] = useState(
     getLocalStorage("hint_length") || "2",
   );
@@ -124,10 +141,7 @@ export default function Generator() {
       <div className="space-y-8 p-4">
         <div className="space-y-4">
           <Label>Select Theme Point</Label>
-          <RadioGroup
-            value={point}
-            onValueChange={(value) => setPoint(value)}
-          >
+          <RadioGroup value={point} onValueChange={(value) => setPoint(value)}>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="1" id="point-1" />
               <Label htmlFor="point-1">1 Point Theme (≤5 letters)</Label>
@@ -278,17 +292,27 @@ export default function Generator() {
             </span>
           ))}
 
-          {Array(
-            (state.matchedAnswers?.length || 0) - state.foundAnswers.length,
-          )
-            .fill("??")
-            .map((placeholder, index) => (
-              <span
+          {state.matchedAnswers
+            ?.filter((answer) => !state.foundAnswers.includes(answer))
+            .map((answer, index) => (
+              <div
                 key={`placeholder-${index}`}
-                className="px-2 py-1 bg-gray-100 rounded-md text-sm text-gray-400"
+                className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-md"
               >
-                {placeholder}
-              </span>
+                <span className="text-sm text-gray-400">
+                  {state.moreHints?.[answer] || "??"}
+                </span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="!h-4 !w-4 !p-0.5 ml-0.5 text-gray-400"
+                  onClick={() =>
+                    dispatch({ type: "GET_MORE_HINT", payload: answer })
+                  }
+                >
+                  <Lightbulb className="!h-3 !w-3" />
+                </Button>
+              </div>
             ))}
         </div>
       </div>
