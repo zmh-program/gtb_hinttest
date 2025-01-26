@@ -1,4 +1,3 @@
-import { Link2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Generator from "@/components/Generator";
 
@@ -11,17 +10,6 @@ export default function Home() {
           <Generator />
         </Card>
       </main>
-      {/* <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4 text-sm"
-          href="https://zmh.me"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Link2 className="w-4 h-4" />
-          Powered by @ProgramZmh
-        </a>
-      </footer> */}
     </div>
   );
 }
