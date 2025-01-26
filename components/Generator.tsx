@@ -13,7 +13,7 @@ import {
   Eye,
   RotateCcw,
 } from "lucide-react";
-
+import { getLocalStorage, setLocalStorage } from "@/lib/utils";
 function getStructure(hint: string | undefined) {
   if (!hint) return "";
   const segements = hint.split(" ");
@@ -68,10 +68,10 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
     case "SET_POINT":
-      localStorage.setItem("point", action.payload.toString());
+      setLocalStorage("point", action.payload.toString());
       return { ...state, point: action.payload };
     case "SET_HINT_LENGTH":
-      localStorage.setItem("hint_length", action.payload.toString());
+      setLocalStorage("hint_length", action.payload.toString());
       return { ...state, hintLength: action.payload };
     case "SUBMIT_ANSWER":
       return { ...state, answer: action.payload };
@@ -113,13 +113,11 @@ const initialState: GameState = {
 export default function Generator() {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const [point, setPoint] = useState(
-    localStorage.getItem("point")
-      ? parseInt(localStorage.getItem("point") || "1")
-      : 1,
+    getLocalStorage("point") ? parseInt(getLocalStorage("point") || "1") : 1,
   );
   const [hintLength, setHintLength] = useState(
-    localStorage.getItem("hint_length")
-      ? parseInt(localStorage.getItem("hint_length") || "2")
+    getLocalStorage("hint_length")
+      ? parseInt(getLocalStorage("hint_length") || "2")
       : 2,
   );
 
