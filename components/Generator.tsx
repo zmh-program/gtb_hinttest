@@ -1,18 +1,24 @@
 "use client";
 
 import { generateHintTest } from "@/lib/generator";
-import { useEffect, useReducer } from "react";
+import { useReducer } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  CheckCircle2,
+  AlertCircle,
+  CirclePlay,
+  Eye,
+  RotateCcw,
+} from "lucide-react";
 
 function getStructure(hint: string | undefined) {
-    if (!hint) return '';
-    const segements = hint.split(' ');
-    const lengths = segements.map(seg => seg.length);
-    return lengths.join('-');
+  if (!hint) return "";
+  const segements = hint.split(" ");
+  const lengths = segements.map((seg) => seg.length);
+  return lengths.join("-");
 }
 
 type GameState = {
@@ -27,7 +33,9 @@ type GameState = {
 };
 
 function includesAnswer(checkingAnswer: string, anwsersList: string[]) {
-  return anwsersList.map(answer => answer.replace(/ /g, '').trim()).includes(checkingAnswer.replace(/ /g, '').trim());
+  return anwsersList
+    .map((answer) => answer.replace(/ /g, "").trim())
+    .includes(checkingAnswer.replace(/ /g, "").trim());
 }
 
 type GameAction =
@@ -42,7 +50,10 @@ type GameAction =
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case "START_GAME": {
-      const { hint, matchedAnswers } = generateHintTest(state.point, state.hintLength);
+      const { hint, matchedAnswers } = generateHintTest(
+        state.point,
+        state.hintLength,
+      );
       return {
         ...state,
         status: "playing",
@@ -54,19 +65,23 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
     case "SET_POINT":
-        localStorage.setItem('point', action.payload.toString());
+      localStorage.setItem("point", action.payload.toString());
       return { ...state, point: action.payload };
     case "SET_HINT_LENGTH":
-        localStorage.setItem('hint_length', action.payload.toString());
+      localStorage.setItem("hint_length", action.payload.toString());
       return { ...state, hintLength: action.payload };
     case "SUBMIT_ANSWER":
       return { ...state, answer: action.payload };
     case "CHECK_ANSWER": {
-      if (!includesAnswer(state.answer, state.matchedAnswers || []) || includesAnswer(state.answer, state.foundAnswers)) {
+      if (
+        !includesAnswer(state.answer, state.matchedAnswers || []) ||
+        includesAnswer(state.answer, state.foundAnswers)
+      ) {
         return { ...state, answer: "" };
       }
       const newFoundAnswers = [...state.foundAnswers, state.answer];
-      const isComplete = newFoundAnswers.length === (state.matchedAnswers?.length || 0);
+      const isComplete =
+        newFoundAnswers.length === (state.matchedAnswers?.length || 0);
       return {
         ...state,
         answer: "",
@@ -85,8 +100,12 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
 const initialState: GameState = {
   status: "start",
-  point: localStorage.getItem('point') ? parseInt(localStorage.getItem('point') || '1') : 1,
-  hintLength: localStorage.getItem('hint_length') ? parseInt(localStorage.getItem('hint_length') || '2') : 2,
+  point: localStorage.getItem("point")
+    ? parseInt(localStorage.getItem("point") || "1")
+    : 1,
+  hintLength: localStorage.getItem("hint_length")
+    ? parseInt(localStorage.getItem("hint_length") || "2")
+    : 2,
   answer: "",
   foundAnswers: [],
   showAllAnswers: false,
@@ -102,7 +121,9 @@ export default function Generator() {
           <Label>Select Theme Point</Label>
           <RadioGroup
             value={state.point.toString()}
-            onValueChange={(value) => dispatch({ type: "SET_POINT", payload: parseInt(value) })}
+            onValueChange={(value) =>
+              dispatch({ type: "SET_POINT", payload: parseInt(value) })
+            }
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="1" id="point-1" />
@@ -125,12 +146,18 @@ export default function Generator() {
             id="hint-length"
             value={state.hintLength}
             onChange={(e) =>
-              dispatch({ type: "SET_HINT_LENGTH", payload: parseInt(e.target.value) || 1 })
+              dispatch({
+                type: "SET_HINT_LENGTH",
+                payload: parseInt(e.target.value) || 1,
+              })
             }
           />
         </div>
 
-        <Button onClick={() => dispatch({ type: "START_GAME" })}>Start Game</Button>
+        <Button onClick={() => dispatch({ type: "START_GAME" })}>
+          <CirclePlay className="w-4 h-4" />
+          Start Game
+        </Button>
       </div>
     );
   }
@@ -141,20 +168,22 @@ export default function Generator() {
         <div className="flex items-center gap-2 p-4 rounded-lg bg-yellow-50">
           <AlertCircle className="h-4 w-4 text-yellow-500" />
           <p className="text-yellow-700">
-            Game Over! You found {state.foundAnswers.length} out of {state.matchedAnswers?.length} answers.
+            Game Over! You found {state.foundAnswers.length} out of{" "}
+            {state.matchedAnswers?.length} answers.
           </p>
         </div>
         <div className="space-y-2">
           <Label>Hint</Label>
-          <div className="flex flex-wrap gap-2">
-            {state.hint}
-          </div>
+          <div className="flex flex-wrap gap-2">{state.hint}</div>
         </div>
         <div className="space-y-2">
           <Label>Found Answers</Label>
           <div className="flex flex-wrap gap-2">
             {state.foundAnswers.map((answer) => (
-              <span key={answer} className="px-2 py-1 bg-green-100 rounded-md text-sm">
+              <span
+                key={answer}
+                className="px-2 py-1 bg-green-100 rounded-md text-sm"
+              >
                 {answer}
               </span>
             ))}
@@ -164,75 +193,98 @@ export default function Generator() {
           <Label>Missed Answers</Label>
           <div className="flex flex-wrap gap-2">
             {state.matchedAnswers
-              ?.filter(answer => !state.foundAnswers.includes(answer))
+              ?.filter((answer) => !state.foundAnswers.includes(answer))
               .map((answer) => (
-                <span key={answer} className="px-2 py-1 bg-red-100 rounded-md text-sm">
+                <span
+                  key={answer}
+                  className="px-2 py-1 bg-red-100 rounded-md text-sm"
+                >
                   {answer}
                 </span>
-            ))}
+              ))}
           </div>
         </div>
-        <Button onClick={() => dispatch({ type: "RESET_GAME" })}>Play Again</Button>
+        <Button onClick={() => dispatch({ type: "RESET_GAME" })}>
+          <CirclePlay className="w-4 h-4" />
+          Play Again
+        </Button>
       </div>
     );
   }
-  
+
   if (state.status === "won") {
     return (
       <div className="space-y-8 p-4">
         <div className="flex items-center gap-2 p-4 rounded-lg bg-green-50">
           <CheckCircle2 className="h-4 w-4 text-green-500" />
           <p className="text-green-700">
-            Congratulations! You found all {state.matchedAnswers?.length} answers!
+            Congratulations! You found all {state.matchedAnswers?.length}{" "}
+            answers!
           </p>
         </div>
         <div className="space-y-2">
           <Label>Hint</Label>
-          <div className="flex flex-wrap gap-2">
-            {state.hint}
-          </div>
+          <div className="flex flex-wrap gap-2">{state.hint}</div>
         </div>
         <div className="space-y-2">
           <Label>Found Answers</Label>
           <div className="flex flex-wrap gap-2">
             {state.foundAnswers.map((answer) => (
-              <span key={answer} className="px-2 py-1 bg-green-100 rounded-md text-sm">
+              <span
+                key={answer}
+                className="px-2 py-1 bg-green-100 rounded-md text-sm"
+              >
                 {answer}
               </span>
             ))}
           </div>
         </div>
-        <Button onClick={() => dispatch({ type: "RESET_GAME" })}>Play Again</Button>
+        <Button onClick={() => dispatch({ type: "RESET_GAME" })}>
+          <CirclePlay className="w-4 h-4" />
+          Play Again
+        </Button>
       </div>
     );
   }
 
   return (
     <div className="space-y-8 p-4">
-      <div className="text-2xl font-bold font-mono tracking-[2px]">
+      <div className="text-2xl font-bold tracking-[2px]">
         {state.hint}
-        <span className="text-sm text-muted-foreground tracking-normal font-normal">({getStructure(state.hint)})</span>
-        </div>
+        <span className="ml-0.5 text-sm text-muted-foreground tracking-normal font-normal">
+          ({getStructure(state.hint)})
+        </span>
+      </div>
       <div className="space-y-2">
-        <Label>Found Answers ({state.foundAnswers.length}/{state.matchedAnswers?.length})</Label>
+        <Label>
+          Found Answers ({state.foundAnswers.length}/
+          {state.matchedAnswers?.length})
+        </Label>
         <div className="flex flex-wrap gap-2">
           {state.foundAnswers.map((answer) => (
-            <span key={answer} className="px-2 py-1 bg-green-100 rounded-md text-sm">
+            <span
+              key={answer}
+              className="px-2 py-1 bg-green-100 rounded-md text-sm"
+            >
               {answer}
             </span>
           ))}
 
-          {Array((state.matchedAnswers?.length || 0) - state.foundAnswers.length)
-              .fill("??")
-              .map((placeholder, index) => (
-                <span key={`placeholder-${index}`} className="px-2 py-1 bg-gray-100 rounded-md text-sm text-gray-400">
-                  {placeholder}
-                </span>
-              ))}
-        
+          {Array(
+            (state.matchedAnswers?.length || 0) - state.foundAnswers.length,
+          )
+            .fill("??")
+            .map((placeholder, index) => (
+              <span
+                key={`placeholder-${index}`}
+                className="px-2 py-1 bg-gray-100 rounded-md text-sm text-gray-400"
+              >
+                {placeholder}
+              </span>
+            ))}
         </div>
       </div>
-      <form 
+      <form
         onSubmit={(e) => {
           e.preventDefault();
           dispatch({ type: "CHECK_ANSWER" });
@@ -244,23 +296,27 @@ export default function Generator() {
           <Input
             id="answer"
             value={state.answer}
-            onChange={(e) => dispatch({ type: "SUBMIT_ANSWER", payload: e.target.value })}
+            onChange={(e) =>
+              dispatch({ type: "SUBMIT_ANSWER", payload: e.target.value })
+            }
           />
           <Button type="submit">Submit</Button>
         </div>
       </form>
 
       <div className="flex gap-2">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={() => dispatch({ type: "SHOW_ALL_ANSWERS" })}
         >
+          <Eye className="w-4 h-4" />
           Show All Answers
         </Button>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={() => dispatch({ type: "RESET_GAME" })}
         >
+          <RotateCcw className="!w-3.5 !h-3.5" />
           Reset Game
         </Button>
       </div>
