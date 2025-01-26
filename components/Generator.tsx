@@ -324,7 +324,7 @@ export default function Generator() {
         className="space-y-4"
       >
         <Label htmlFor="answer">Your Answer</Label>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-col sm:flex-row">
           <Input
             id="answer"
             value={state.answer}
@@ -336,7 +336,7 @@ export default function Generator() {
         </div>
       </form>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col md:flex-row gap-2">
         <Button
           variant="outline"
           onClick={() => dispatch({ type: "SHOW_ALL_ANSWERS" })}
