@@ -1,7 +1,7 @@
 "use client";
 
 import { generateHintTest } from "@/lib/generator";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,7 +39,7 @@ function includesAnswer(checkingAnswer: string, anwsersList: string[]) {
 }
 
 type GameAction =
-  | { type: "START_GAME" }
+  | { type: "START_GAME"; payload: { point: number; hintLength: number } }
   | { type: "SET_POINT"; payload: number }
   | { type: "SET_HINT_LENGTH"; payload: number }
   | { type: "SUBMIT_ANSWER"; payload: string }
@@ -51,11 +51,14 @@ function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case "START_GAME": {
       const { hint, matchedAnswers } = generateHintTest(
-        state.point,
-        state.hintLength,
+        action.payload.point,
+        action.payload.hintLength,
       );
+
       return {
         ...state,
+        point: action.payload.point,
+        hintLength: action.payload.hintLength,
         status: "playing",
         hint,
         matchedAnswers,
@@ -100,12 +103,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
 const initialState: GameState = {
   status: "start",
-  point: localStorage.getItem("point")
-    ? parseInt(localStorage.getItem("point") || "1")
-    : 1,
-  hintLength: localStorage.getItem("hint_length")
-    ? parseInt(localStorage.getItem("hint_length") || "2")
-    : 2,
+  point: 1,
+  hintLength: 2,
   answer: "",
   foundAnswers: [],
   showAllAnswers: false,
@@ -113,6 +112,16 @@ const initialState: GameState = {
 
 export default function Generator() {
   const [state, dispatch] = useReducer(gameReducer, initialState);
+  const [point, setPoint] = useState(
+    localStorage.getItem("point")
+      ? parseInt(localStorage.getItem("point") || "1")
+      : 1,
+  );
+  const [hintLength, setHintLength] = useState(
+    localStorage.getItem("hint_length")
+      ? parseInt(localStorage.getItem("hint_length") || "2")
+      : 2,
+  );
 
   if (state.status === "start") {
     return (
@@ -120,10 +129,8 @@ export default function Generator() {
         <div className="space-y-4">
           <Label>Select Theme Point</Label>
           <RadioGroup
-            value={state.point.toString()}
-            onValueChange={(value) =>
-              dispatch({ type: "SET_POINT", payload: parseInt(value) })
-            }
+            value={point.toString()}
+            onValueChange={(value) => setPoint(parseInt(value))}
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="1" id="point-1" />
@@ -144,17 +151,16 @@ export default function Generator() {
           <Label htmlFor="hint-length">Initial Given Hint Length</Label>
           <Input
             id="hint-length"
-            value={state.hintLength}
-            onChange={(e) =>
-              dispatch({
-                type: "SET_HINT_LENGTH",
-                payload: parseInt(e.target.value) || 1,
-              })
-            }
+            value={hintLength.toString()}
+            onChange={(e) => setHintLength(parseInt(e.target.value))}
           />
         </div>
 
-        <Button onClick={() => dispatch({ type: "START_GAME" })}>
+        <Button
+          onClick={() => {
+            dispatch({ type: "START_GAME", payload: { point, hintLength } });
+          }}
+        >
           <CirclePlay className="w-4 h-4" />
           Start Game
         </Button>
