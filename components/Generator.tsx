@@ -80,15 +80,16 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case "SUBMIT_ANSWER":
       return { ...state, answer: action.payload };
     case "CHECK_ANSWER": {
+      const formattedAnswer = state.answer.trim().toLowerCase();
       if (
-        !includesAnswer(state.answer, state.matchedAnswers || []) ||
-        includesAnswer(state.answer, state.foundAnswers)
+        !includesAnswer(formattedAnswer, state.matchedAnswers || []) ||
+        includesAnswer(formattedAnswer, state.foundAnswers)
       ) {
         toast.error("Answer is incorrect");
         return { ...state, answer: "" };
       }
 
-      const newFoundAnswers = [...state.foundAnswers, state.answer];
+      const newFoundAnswers = [...state.foundAnswers, formattedAnswer];
       const isComplete =
         newFoundAnswers.length === (state.matchedAnswers?.length || 0);
 
