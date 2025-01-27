@@ -53,7 +53,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       );
     }
     return (
-      // @ts-expect-error
+      // @ts-expect-error framer-motion types conflict with React.forwardRef types
       <motion.button
         whileTap={{ scale: 0.975 }}
         className={cn(buttonVariants({ variant, size, className }))}
