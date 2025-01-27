@@ -19,7 +19,6 @@ airport
 airship
 avocado
 air~horn
-airplane
 aquarium
 antivirus
 ambulance
@@ -35,7 +34,6 @@ bar
 bat
 bee
 bin
-box
 boy
 bug
 baby
@@ -58,7 +56,6 @@ bull
 bush
 bacon
 badge
-baker
 banjo
 beach
 beans
@@ -76,11 +73,9 @@ brush
 bunny
 bakery
 bamboo
-banana
 banner
 barrel
 basket
-batman
 beanie
 beaver
 beetle
@@ -89,8 +84,6 @@ border
 bottle
 bridge
 broken
-bubble
-bucket
 buffet
 burger
 butter
@@ -111,13 +104,12 @@ blanket
 blender
 bow~tie
 bowling
-butcher
+bubbles
 backflip
 backpack
 baguette
 baseball
 bathroom
-bean~bag
 birthday
 blizzard
 bookmark
@@ -155,7 +147,6 @@ bowling~ball
 build~battle
 bouncy~castle
 bow~and~arrow
-broken~bridge
 baseball~field
 birthday~party
 basketball~court
@@ -257,12 +248,12 @@ crowbar
 crystal
 cupcake
 curtain
+cyclops
 calendar
 campfire
 car~wash
 carnival
 carriage
-cassette
 catacomb
 catapult
 cauldron
@@ -273,14 +264,12 @@ computer
 corn~dog
 criminal
 crossbow
-cucumber
 caribbean
 carpenter
 celebrate
 chef~hat
 chocolate
 christmas
-classroom
 cockroach
 colosseum
 crocodile
@@ -289,7 +278,6 @@ calculator
 camouflage
 campground
 candy~cane
-cannonball
 card~games
 cereal~box
 chandelier
@@ -324,12 +312,10 @@ dvd
 dad
 day
 dog
-dye
 date
 deer
 desk
 dice
-disc
 dish
 doll
 door
@@ -401,7 +387,6 @@ elephant
 elevator
 enderman
 envelope
-exercise
 escalator
 explosion
 eye~patch
@@ -446,7 +431,6 @@ fossil
 fridge
 frozen
 factory
-feather
 firefly
 fishing
 flipper
@@ -536,9 +520,8 @@ grasshopper
 gaming~chair
 garlic~bread
 golden~apple
-grabage~truck
+garbage~truck
 glass~of~milk
-greek~temple
 great~britain
 gingerbread~man
 games~controller
@@ -550,7 +533,6 @@ hog
 hut
 hair
 halo
-hand
 harp
 head
 hero
@@ -587,7 +569,6 @@ hypixel
 hard~hat
 headband
 hedgehog
-heptagon
 homework
 hospital
 hair~band
@@ -645,6 +626,7 @@ jigsaw
 jungle
 jet~ski
 jetpack
+jogging
 jumping
 joystick
 juggling
@@ -662,6 +644,7 @@ knee
 kayak
 knife
 koala
+karate
 kennel
 kettle
 kitten
@@ -740,11 +723,9 @@ mop
 mud
 mug
 mail
-mark
 mars
 mask
 maze
-milk
 mine
 moat
 mole
@@ -765,7 +746,6 @@ market
 mexico
 mining
 mirror
-monkey
 muffin
 muscle
 museum
@@ -821,7 +801,6 @@ modern~house
 movie~theatre
 medieval~house
 magnifying~glass
-nose
 night
 ninja
 nurse
@@ -858,7 +837,6 @@ ostrich
 olympics
 omelette
 ornament
-orchestra
 onion~ring
 orange~juice
 pan
@@ -876,7 +854,6 @@ plug
 pond
 pony
 pool
-pump
 paint
 panda
 paper
@@ -956,9 +933,9 @@ pineapple
 pitchfork
 propeller
 paintbrush
-phonecase
+phone~case
 photograph
-piggybank
+piggy~bank
 pillowcase
 pirate~hat
 playground
@@ -1049,12 +1026,9 @@ roller~blades
 rollercoaster
 saw
 ski
-sky
-sob
 spy
 sun
 safe
-sail
 salt
 seal
 seat
@@ -1065,14 +1039,12 @@ shop
 sign
 silo
 sink
-sled
 slug
 snow
 soap
 soda
 sofa
 soil
-song
 soup
 star
 suit
@@ -1083,7 +1055,6 @@ santa
 sauce
 scale
 scarf
-screw
 sewer
 shack
 shark
@@ -1132,7 +1103,6 @@ safari
 salmon
 saloon
 scared
-school
 screen
 scythe
 shapes
@@ -1179,7 +1149,6 @@ skating
 skywars
 snowing
 snowman
-soldier
 stables
 stadium
 storage
@@ -1190,10 +1159,8 @@ sailboat
 sandwich
 sardines
 scaffold
-scissors
 scorpion
 seahorse
-shopping
 shoulder
 sidewalk
 skeleton
@@ -1252,7 +1219,6 @@ supermarket
 scuba~diving
 shopping~bag
 sleeping~bag
-solar~panels
 snowboarding
 solar~system
 swiss~cheese
@@ -1279,7 +1245,6 @@ tape
 taxi
 tent
 thug
-time
 toad
 toes
 trap
@@ -1421,7 +1386,6 @@ wasp
 wave
 well
 wind
-wine
 wink
 wire
 wolf
@@ -1435,7 +1399,6 @@ wheat
 wheel
 wings
 witch
-world
 waffle
 wallet
 walrus
@@ -1480,7 +1443,6 @@ zoo
 zeus
 zebra
 zipper
-zombie
 zip~line
 zombie~apocalypse
 artic
@@ -1514,8 +1476,9 @@ narwhal
 meadow
 monocle
 orchid
-rhoenix
-ricnic
+phoenix
+picnic
+ramen
 ruins
 savanna
 shadow
