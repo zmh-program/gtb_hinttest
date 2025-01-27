@@ -968,7 +968,7 @@ pineapple~pizza
 queen
 quiver
 quad~bike
-quick~sand
+quicksand
 rat
 rug
 race
