@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CirclePlay, Eye, RotateCcw, Lightbulb, Lamp } from "lucide-react";
+import { CirclePlay, Eye, RotateCcw, Lamp } from "lucide-react";
 import { getLocalStorage, setLocalStorage } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -46,6 +46,7 @@ type GameAction =
   | { type: "SHOW_ALL_ANSWERS" }
   | { type: "RESET_GAME" }
   | { type: "GET_MORE_HINT"; payload: string }
+  | { type: "GET_ALL_HINTS" }
   | { type: "TICK_TIMER" }
   | { type: "TIMEOUT" };
 
@@ -81,6 +82,11 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...state, answer: action.payload };
     case "CHECK_ANSWER": {
       const formattedAnswer = state.answer.trim().toLowerCase();
+
+      if (formattedAnswer.length === 0) {
+        return { ...state, answer: "" };
+      }
+
       if (
         !includesAnswer(formattedAnswer, state.matchedAnswers || []) ||
         includesAnswer(formattedAnswer, state.foundAnswers)
@@ -153,6 +159,19 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         },
       };
     }
+    case "GET_ALL_HINTS": {
+      const newMoreHints = { ...state.moreHints };
+      state.matchedAnswers?.forEach((answer) => {
+        if (!state.foundAnswers.includes(answer)) {
+          const currentHint = state.moreHints?.[answer] || state.hint;
+          newMoreHints[answer] = generateMoreHint(answer, currentHint || "");
+        }
+      });
+      return {
+        ...state,
+        moreHints: newMoreHints,
+      };
+    }
     case "SHOW_ALL_ANSWERS":
       return { ...state, showAllAnswers: true };
     case "RESET_GAME":
@@ -173,7 +192,7 @@ const initialState: GameState = {
   score: parseInt(getLocalStorage("score") || "0"),
 };
 
-export default function Generator() {
+export default function HintTest() {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const [point, setPoint] = useState(getLocalStorage("point") || "1");
   const [hintLength, setHintLength] = useState(
@@ -282,10 +301,10 @@ export default function Generator() {
         <motion.div
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
-          className="flex items-center gap-3 p-3 rounded-lg bg-yellow-50/50 border border-yellow-200"
+          className="flex items-center gap-3 p-3 rounded-lg bg-yellow-50/50 border border-yellow-200 dark:bg-yellow-500/10 dark:border-yellow-500/80"
         >
           <img src="/emoji/alarm.png" alt="" className="w-6 h-6" />
-          <p className="text-yellow-800 text-sm">
+          <p className="text-yellow-800 text-sm dark:text-yellow-500">
             {state.status === "timeout" ? "Time's up!" : "Game Over!"} You found{" "}
             {state.foundAnswers.length} out of {state.matchedAnswers?.length}{" "}
             answers.
@@ -357,10 +376,10 @@ export default function Generator() {
         <motion.div
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
-          className="flex items-center gap-3 p-3 rounded-lg bg-green-50/50 border border-green-200"
+          className="flex items-center gap-3 p-3 rounded-lg bg-green-50/50 border border-green-200 dark:bg-green-500/10 dark:border-green-500/40"
         >
           <img src="/emoji/fireworks.png" alt="" className="w-6 h-6" />
-          <p className="text-green-800 text-sm">
+          <p className="text-green-800 text-sm dark:text-green-500">
             Congratulations! You found all {state.matchedAnswers?.length}{" "}
             answers with {state.timeLeft} seconds remaining!
           </p>
@@ -457,10 +476,20 @@ export default function Generator() {
         </span>
       </motion.div>
       <div className="space-y-2">
-        <Label className="text-base font-semibold">
-          Found Answers ({state.foundAnswers.length}/
-          {state.matchedAnswers?.length})
-        </Label>
+        <div className="flex justify-between items-center">
+          <Label className="text-base font-semibold">
+            Found Answers ({state.foundAnswers.length}/
+            {state.matchedAnswers?.length})
+          </Label>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-6 w-6 rounded-full"
+            onClick={() => dispatch({ type: "GET_ALL_HINTS" })}
+          >
+            <Lamp className="!h-4 !w-4" />
+          </Button>
+        </div>
         <div className="flex flex-wrap gap-2">
           <AnimatePresence>
             {state.foundAnswers.map((answer) => (

@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import Generator from "@/components/generator";
+import HintTest from "@/components/hint-test";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 export default function Home() {
   return (
@@ -10,7 +10,7 @@ export default function Home() {
           <ThemeSwitcher />
         </h1>
         <Card className="p-2 bg-background/95 rounded-lg md:min-w-[400px]">
-          <Generator />
+          <HintTest />
         </Card>
       </main>
     </div>
