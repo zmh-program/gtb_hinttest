@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CirclePlay, Eye, RotateCcw, Lightbulb } from "lucide-react";
+import { CirclePlay, Eye, RotateCcw, Lightbulb, Lamp } from "lucide-react";
 import { getLocalStorage, setLocalStorage } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -195,51 +195,60 @@ export default function Generator() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6 p-6"
+        className="space-y-6 p-6 max-w-md mx-auto"
       >
         <div className="space-y-3">
-          <Label className="text-lg font-medium">Select Theme Point</Label>
+          <Label className="text-base font-semibold">Select Theme Point</Label>
           <RadioGroup
             value={point}
             onValueChange={(value) => setPoint(value)}
-            className="grid gap-3"
+            className="grid gap-2"
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="1" id="point-1" />
-              <Label htmlFor="point-1" className="font-medium cursor-pointer">
+              <Label
+                htmlFor="point-1"
+                className="font-medium cursor-pointer text-sm"
+              >
                 1 Point Theme (≤5 letters)
               </Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="2" id="point-2" />
-              <Label htmlFor="point-2" className="font-medium cursor-pointer">
+              <Label
+                htmlFor="point-2"
+                className="font-medium cursor-pointer text-sm"
+              >
                 2 Point Theme (6-8 letters)
               </Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="3" id="point-3" />
-              <Label htmlFor="point-3" className="font-medium cursor-pointer">
+              <Label
+                htmlFor="point-3"
+                className="font-medium cursor-pointer text-sm"
+              >
                 3 Point Theme (≥9 letters)
               </Label>
             </div>
           </RadioGroup>
         </div>
 
-        <div className="space-y-3">
-          <Label htmlFor="hint-length" className="text-lg font-medium">
+        <div className="space-y-2">
+          <Label htmlFor="hint-length" className="text-base font-semibold">
             Initial Given Hint Length
           </Label>
           <Input
             id="hint-length"
             value={hintLength}
             onChange={(e) => setHintLength(e.target.value)}
-            className="text-lg"
+            className="h-10"
           />
         </div>
 
         <Button
           size="lg"
-          className="w-full"
+          className="w-full mt-4"
           onClick={() => {
             dispatch({
               type: "START_GAME",
@@ -250,12 +259,14 @@ export default function Generator() {
             });
           }}
         >
-          <CirclePlay className="w-5 h-5 mr-2" />
+          <CirclePlay className="w-4 h-4 mr-2" />
           Start Game
         </Button>
 
         <div className="text-center">
-          <p className="text-sm">Total Score: {state.score}</p>
+          <p className="text-sm text-muted-foreground">
+            Total Score: {state.score}
+          </p>
         </div>
       </motion.div>
     );
@@ -266,28 +277,28 @@ export default function Generator() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="space-y-8 p-6"
+        className="space-y-6 p-6 max-w-md mx-auto"
       >
         <motion.div
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
-          className="flex items-center gap-3 p-4 rounded-lg bg-yellow-50/50 border border-yellow-200"
+          className="flex items-center gap-3 p-3 rounded-lg bg-yellow-50/50 border border-yellow-200"
         >
-          <img src="/emoji/alarm.png" alt="" className="w-8 h-8" />
-          <p className="text-yellow-800 font-medium">
+          <img src="/emoji/alarm.png" alt="" className="w-6 h-6" />
+          <p className="text-yellow-800 text-sm">
             {state.status === "timeout" ? "Time's up!" : "Game Over!"} You found{" "}
             {state.foundAnswers.length} out of {state.matchedAnswers?.length}{" "}
             answers.
           </p>
         </motion.div>
-        <div className="space-y-3">
-          <Label className="text-lg font-medium">Hint</Label>
-          <div className="flex flex-wrap gap-2 p-4 rounded-lg bg-muted">
+        <div className="space-y-2">
+          <Label className="text-base font-semibold">Hint</Label>
+          <div className="flex flex-wrap gap-2 p-3 rounded-lg bg-muted text-sm">
             {state.hint}
           </div>
         </div>
-        <div className="space-y-3">
-          <Label className="text-lg font-medium">Found Answers</Label>
+        <div className="space-y-2">
+          <Label className="text-base font-semibold">Found Answers</Label>
           <div className="flex flex-wrap gap-2">
             <AnimatePresence>
               {state.foundAnswers.map((answer) => (
@@ -296,7 +307,7 @@ export default function Generator() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="px-3 py-1.5 bg-green-100 text-green-800 rounded-full font-medium"
+                  className="px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-sm"
                 >
                   {answer}
                 </motion.span>
@@ -304,8 +315,8 @@ export default function Generator() {
             </AnimatePresence>
           </div>
         </div>
-        <div className="space-y-3">
-          <Label className="text-lg font-medium">Missed Answers</Label>
+        <div className="space-y-2">
+          <Label className="text-base font-semibold">Missed Answers</Label>
           <div className="flex flex-wrap gap-2">
             <AnimatePresence>
               {state.matchedAnswers
@@ -316,7 +327,7 @@ export default function Generator() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    className="px-3 py-1.5 bg-red-100 text-red-800 rounded-full font-medium"
+                    className="px-2.5 py-1 bg-red-100 text-red-800 rounded-full text-sm"
                   >
                     {answer}
                   </motion.span>
@@ -326,10 +337,10 @@ export default function Generator() {
         </div>
         <Button
           size="lg"
-          className="w-full"
+          className="w-full mt-4"
           onClick={() => dispatch({ type: "RESET_GAME" })}
         >
-          <CirclePlay className="w-5 h-5 mr-2" />
+          <CirclePlay className="w-4 h-4 mr-2" />
           Play Again
         </Button>
       </motion.div>
@@ -341,27 +352,27 @@ export default function Generator() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-8 p-6"
+        className="space-y-6 p-6 max-w-md mx-auto"
       >
         <motion.div
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
-          className="flex items-center gap-3 p-4 rounded-lg bg-green-50/50 border border-green-200"
+          className="flex items-center gap-3 p-3 rounded-lg bg-green-50/50 border border-green-200"
         >
-          <img src="/emoji/fireworks.png" alt="" className="w-8 h-8" />
-          <p className="text-green-800 font-medium">
+          <img src="/emoji/fireworks.png" alt="" className="w-6 h-6" />
+          <p className="text-green-800 text-sm">
             Congratulations! You found all {state.matchedAnswers?.length}{" "}
             answers with {state.timeLeft} seconds remaining!
           </p>
         </motion.div>
-        <div className="space-y-3">
-          <Label className="text-lg font-medium">Hint</Label>
-          <div className="flex flex-wrap gap-2 p-4 rounded-lg bg-muted">
+        <div className="space-y-2">
+          <Label className="text-base font-semibold">Hint</Label>
+          <div className="flex flex-wrap gap-2 p-3 rounded-lg bg-muted text-sm">
             {state.hint}
           </div>
         </div>
-        <div className="space-y-3">
-          <Label className="text-lg font-medium">Found Answers</Label>
+        <div className="space-y-2">
+          <Label className="text-base font-semibold">Found Answers</Label>
           <div className="flex flex-wrap gap-2">
             <AnimatePresence>
               {state.foundAnswers.map((answer) => (
@@ -370,7 +381,7 @@ export default function Generator() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="px-3 py-1.5 bg-green-100 text-green-800 rounded-full font-medium"
+                  className="px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-sm"
                 >
                   {answer}
                 </motion.span>
@@ -380,10 +391,10 @@ export default function Generator() {
         </div>
         <Button
           size="lg"
-          className="w-full"
+          className="w-full mt-4"
           onClick={() => dispatch({ type: "RESET_GAME" })}
         >
-          <CirclePlay className="w-5 h-5 mr-2" />
+          <CirclePlay className="w-4 h-4 mr-2" />
           Play Again
         </Button>
       </motion.div>
@@ -394,24 +405,24 @@ export default function Generator() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-8 p-6"
+      className="space-y-6 p-6 max-w-md mx-auto"
     >
       <div className="flex justify-between items-center">
         <div className="text-sm font-medium"></div>
-        <div className="relative w-12 h-12">
+        <div className="relative w-10 h-10">
           <svg className="w-full h-full -rotate-90">
             <circle
-              cx="24"
-              cy="24"
-              r="20"
+              cx="20"
+              cy="20"
+              r="18"
               fill="none"
               stroke="#e5e5e5"
-              strokeWidth="4"
+              strokeWidth="3"
             />
             <circle
-              cx="24"
-              cy="24"
-              r="20"
+              cx="20"
+              cy="20"
+              r="18"
               fill="none"
               stroke={
                 state.timeLeft > 30
@@ -420,14 +431,14 @@ export default function Generator() {
                     ? "#eab308"
                     : "#ef4444"
               }
-              strokeWidth="4"
-              strokeDasharray={`${(state.timeLeft / 90) * 126} 126`}
+              strokeWidth="3"
+              strokeDasharray={`${(state.timeLeft / 90) * 113} 113`}
               className="transition-all duration-1000"
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
             <span
-              className={`text-sm font-medium ${state.timeLeft <= 10 ? "text-red-500" : ""}`}
+              className={`text-xs font-medium ${state.timeLeft <= 10 ? "text-red-500" : ""}`}
             >
               {state.timeLeft}
             </span>
@@ -438,15 +449,15 @@ export default function Generator() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="text-3xl font-bold tracking-[2px] p-4 rounded-lg bg-muted text-center"
+        className="text-2xl font-bold tracking-[2px] p-3 rounded-lg bg-muted text-center"
       >
         {state.hint}
-        <span className="ml-2 text-sm text-muted-foreground tracking-normal font-normal">
+        <span className="ml-2 text-xs text-muted-foreground tracking-normal font-normal">
           ({getStructure(state.hint)})
         </span>
       </motion.div>
-      <div className="space-y-3">
-        <Label className="text-lg font-medium">
+      <div className="space-y-2">
+        <Label className="text-base font-semibold">
           Found Answers ({state.foundAnswers.length}/
           {state.matchedAnswers?.length})
         </Label>
@@ -458,7 +469,7 @@ export default function Generator() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="px-3 py-1.5 bg-green-100 text-green-800 rounded-full font-medium"
+                className="px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-sm"
               >
                 {answer}
               </motion.span>
@@ -472,20 +483,20 @@ export default function Generator() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full"
+                  className="flex items-center gap-1.5 px-2.5 py-1 bg-muted rounded-full"
                 >
-                  <span className="text-muted-foreground font-medium">
+                  <span className="text-muted-foreground text-sm">
                     {state.moreHints?.[answer] || "??"}
                   </span>
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="h-6 w-6 rounded-full"
+                    className="h-5 w-5 rounded-full"
                     onClick={() =>
                       dispatch({ type: "GET_MORE_HINT", payload: answer })
                     }
                   >
-                    <Lightbulb className="h-4 w-4" />
+                    <Lamp className="!h-3.5 !w-3.5" />
                   </Button>
                 </motion.div>
               ))}
@@ -497,43 +508,41 @@ export default function Generator() {
           e.preventDefault();
           dispatch({ type: "CHECK_ANSWER" });
         }}
-        className="space-y-4"
+        className="space-y-3"
       >
-        <Label htmlFor="answer" className="text-lg font-medium">
+        <Label htmlFor="answer" className="text-base font-semibold">
           Your Answer
         </Label>
-        <div className="flex gap-3 flex-col sm:flex-row">
+        <div className="flex gap-2 flex-col sm:flex-row">
           <Input
             id="answer"
             value={state.answer}
             onChange={(e) =>
               dispatch({ type: "SUBMIT_ANSWER", payload: e.target.value })
             }
-            className="text-lg"
+            className="h-10"
           />
-          <Button type="submit" size="lg">
+          <Button type="submit" className="h-10">
             Submit
           </Button>
         </div>
       </form>
 
-      <div className="flex flex-col md:flex-row gap-3">
+      <div className="flex flex-col md:flex-row gap-2 pt-2">
         <Button
           variant="outline"
-          size="lg"
-          className="flex-1"
+          className="flex-1 h-10"
           onClick={() => dispatch({ type: "SHOW_ALL_ANSWERS" })}
         >
-          <Eye className="w-5 h-5 mr-2" />
+          <Eye className="w-4 h-4 mr-2" />
           Show All Answers
         </Button>
         <Button
           variant="outline"
-          size="lg"
-          className="flex-1"
+          className="flex-1 h-10"
           onClick={() => dispatch({ type: "RESET_GAME" })}
         >
-          <RotateCcw className="w-5 h-5 mr-2" />
+          <RotateCcw className="w-4 h-4 mr-2" />
           Reset Game
         </Button>
       </div>

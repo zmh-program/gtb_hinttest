@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -39,10 +39,14 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  closeScale?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  (
+    { className, variant, size, asChild = false, closeScale = false, ...props },
+    ref,
+  ) => {
     if (asChild) {
       return (
         <Slot
@@ -55,7 +59,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       // @ts-expect-error framer-motion types conflict with React.forwardRef types
       <motion.button
-        whileTap={{ scale: 0.975 }}
+        whileTap={{ scale: closeScale ? 1 : 0.975 }}
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
