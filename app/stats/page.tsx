@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Search, User, Key, AlertCircle, Loader2 } from "lucide-react";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { useSearchParams, useRouter } from "next/navigation";
 
 function ErrorMessage({ message }: { message: string }) {
   return (
@@ -18,18 +19,23 @@ function ErrorMessage({ message }: { message: string }) {
 
 function StatsDisplay({ stats }: { stats: any }) {
   const bbStats = stats.stats?.BuildBattle || {};
-  const [avatarUrls, setAvatarUrls] = useState<{ head: string; body: string } | null>(null);
+  const [avatarUrls, setAvatarUrls] = useState<{
+    head: string;
+    body: string;
+  } | null>(null);
 
   useEffect(() => {
     async function fetchAvatars() {
       try {
-        const response = await fetch(`/api/avatar?username=${stats.displayname}`);
+        const response = await fetch(
+          `/api/avatar?username=${stats.displayname}`,
+        );
         const data = await response.json();
         if (data.allUrls) {
           setAvatarUrls(data.allUrls);
         }
       } catch (error) {
-        console.error('Failed to fetch avatars:', error);
+        console.error("Failed to fetch avatars:", error);
       }
     }
     fetchAvatars();
@@ -46,7 +52,8 @@ function StatsDisplay({ stats }: { stats: any }) {
   }, [bbStats.games_played, bbStats.wins]);
 
   const averagePoint = useMemo(() => {
-    if (!bbStats.score || !bbStats.games_played || bbStats.games_played === 0) return 0;
+    if (!bbStats.score || !bbStats.games_played || bbStats.games_played === 0)
+      return 0;
     return (bbStats.score / bbStats.games_played).toFixed(2);
   }, [bbStats.score, bbStats.games_played]);
 
@@ -61,21 +68,22 @@ function StatsDisplay({ stats }: { stats: any }) {
   }, [bbStats.correct_guesses, bbStats.games_played]);
 
   // Calculate total wins for each mode
-  const bbTotalWins = (bbStats.wins_solo_normal || 0) + 
-                     (bbStats.wins_teams_normal || 0) + 
-                     (bbStats.wins_pro_mode || 0);
+  const bbTotalWins =
+    (bbStats.wins_solo_normal || 0) +
+    (bbStats.wins_teams_normal || 0) +
+    (bbStats.wins_pro_mode || 0);
   const gtbTotalWins = bbStats.wins_guess_the_build || 0;
   const spbTotalWins = bbStats.wins_speed_builders || 0;
 
   // Determine main mode
   const mainMode = useMemo(() => {
     const modes = [
-      { name: 'BB', wins: bbTotalWins },
-      { name: 'GTB', wins: gtbTotalWins }, 
-      { name: 'SPB', wins: spbTotalWins }
+      { name: "BB", wins: bbTotalWins },
+      { name: "GTB", wins: gtbTotalWins },
+      { name: "SPB", wins: spbTotalWins },
     ];
-    const topMode = modes.reduce((prev, current) => 
-      (prev.wins > current.wins) ? prev : current
+    const topMode = modes.reduce((prev, current) =>
+      prev.wins > current.wins ? prev : current,
     );
     return topMode.wins > 0 ? topMode.name : null;
   }, [bbTotalWins, gtbTotalWins, spbTotalWins]);
@@ -86,8 +94,8 @@ function StatsDisplay({ stats }: { stats: any }) {
         <div className="flex items-center gap-3">
           {avatarUrls && (
             <div className="flex items-center">
-              <img 
-                src={avatarUrls.head} 
+              <img
+                src={avatarUrls.head}
                 alt={`${stats.displayname}'s head`}
                 className="w-8 h-8 rounded-md"
                 loading="lazy"
@@ -138,20 +146,22 @@ function StatsDisplay({ stats }: { stats: any }) {
               <span>{bbStats.emblem?.selected_icon || "N/A"}</span>
             </div> */}
 
-              <div className="flex-grow" />
-              <img 
-                src={avatarUrls?.body} 
-                alt={`${stats.displayname}'s body`}
-                className="w-16 mx-auto pb-2"
-                loading="lazy"
-              />
+            <div className="flex-grow" />
+            <img
+              src={avatarUrls?.body}
+              alt={`${stats.displayname}'s body`}
+              className="w-16 mx-auto pb-2"
+              loading="lazy"
+            />
           </div>
         </Card>
 
         <div className="space-y-3">
           <Card className="p-3">
             <h3 className="text-sm font-medium flex items-center mb-1.5">
-              <span className="bg-secondary px-1.5 py-0.5 rounded text-xs mr-2">BB</span>
+              <span className="bg-secondary px-1.5 py-0.5 rounded text-xs mr-2">
+                BB
+              </span>
               Build Battle
             </h3>
             <div className="space-y-1.5">
@@ -184,7 +194,9 @@ function StatsDisplay({ stats }: { stats: any }) {
 
           <Card className="p-3">
             <h3 className="text-sm font-medium flex items-center mb-1.5">
-              <span className="bg-secondary px-1.5 py-0.5 rounded text-xs mr-2">GTB</span>
+              <span className="bg-secondary px-1.5 py-0.5 rounded text-xs mr-2">
+                GTB
+              </span>
               Guess The Build
             </h3>
             <div className="space-y-1.5">
@@ -205,7 +217,9 @@ function StatsDisplay({ stats }: { stats: any }) {
 
           <Card className="p-3">
             <h3 className="text-sm font-medium flex items-center mb-1.5">
-              <span className="bg-secondary px-1.5 py-0.5 rounded text-xs mr-2">SPB</span>
+              <span className="bg-secondary px-1.5 py-0.5 rounded text-xs mr-2">
+                SPB
+              </span>
               Speed Builders
             </h3>
             <div className="flex justify-between items-center text-sm">
@@ -225,17 +239,35 @@ export default function Stats() {
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  // Load saved API key on mount
   useEffect(() => {
+    if (apiKey || username) return;
+
     const savedApiKey = localStorage.getItem("hypixel_api_key");
     if (savedApiKey) {
       setApiKey(savedApiKey);
     }
-  }, []);
 
-  async function fetchStats() {
-    if (!username || !apiKey) {
+    // Check for username in URL
+    const urlUsername = searchParams.get("u");
+    if (urlUsername) {
+      setUsername(urlUsername);
+      // If we have both username and API key, trigger search
+      if (savedApiKey) {
+        fetchStats(urlUsername, savedApiKey);
+      }
+    }
+  }, [searchParams]);
+
+  async function fetchStats(
+    usernameToSearch: string = username,
+    apiKeyToUse: string = apiKey,
+  ) {
+    usernameToSearch = usernameToSearch.trim();
+    apiKeyToUse = apiKeyToUse.trim();
+    if (!usernameToSearch || !apiKeyToUse) {
       setError("Please enter both username and API key");
       return;
     }
@@ -243,14 +275,17 @@ export default function Stats() {
     setError(null);
     setStats(null);
     setLoading(true);
-  
+
     try {
       const response = await fetch("/api/stats", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, api_key: apiKey }),
+        body: JSON.stringify({
+          username: usernameToSearch,
+          api_key: apiKeyToUse,
+        }),
       });
 
       const data = await response.json();
@@ -260,15 +295,22 @@ export default function Stats() {
       }
 
       // Save API key to localStorage on successful request
-      localStorage.setItem("hypixel_api_key", apiKey);
-      
+      localStorage.setItem("hypixel_api_key", apiKeyToUse);
+
       if (data.player?.stats?.BuildBattle) {
         console.log(data.player.stats.BuildBattle);
       }
 
       setStats(data);
+
+      // Update URL with username parameter without refreshing the page
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("u", usernameToSearch);
+      router.push(`?${params.toString()}`, { scroll: false });
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Failed to fetch player stats");
+      setError(
+        error instanceof Error ? error.message : "Failed to fetch player stats",
+      );
       console.error(error);
     } finally {
       setLoading(false);
@@ -309,7 +351,11 @@ export default function Stats() {
                 />
               </div>
             </div>
-            <Button onClick={fetchStats} disabled={loading} className="w-full">
+            <Button
+              onClick={() => fetchStats()}
+              disabled={loading}
+              className="w-full"
+            >
               {loading ? (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               ) : (
