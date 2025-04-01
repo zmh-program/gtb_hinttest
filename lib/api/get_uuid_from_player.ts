@@ -27,8 +27,10 @@ async function getMojangUUID(username: string): Promise<string> {
 
   if (mojangData.errorMessage) {
     // include  Couldn't find any profile with name
-    if (mojangData.errorMessage.includes("Couldn't find any profile with name")) {
-        throw new Error(`Player does not exist: ${username}`);
+    if (
+      mojangData.errorMessage.includes("Couldn't find any profile with name")
+    ) {
+      throw new Error(`Player does not exist: ${username}`);
     }
 
     throw new Error("Mojang API Error: " + mojangData.errorMessage);

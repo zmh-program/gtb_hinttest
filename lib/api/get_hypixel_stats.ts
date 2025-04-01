@@ -20,7 +20,7 @@ async function getHypixelStatsRaw(uuid: string, apiKey: string): Promise<any> {
   });
 
   const hypixelData: HypixelResponse = await hypixelRes.json();
-  
+
   if (!hypixelData.success) {
     throw new Error(hypixelData.cause || "Failed to fetch Hypixel stats");
   }
@@ -34,7 +34,7 @@ async function getHypixelStatsRaw(uuid: string, apiKey: string): Promise<any> {
 
 export async function getHypixelStats(
   uuid: string,
-  apiKey: string
+  apiKey: string,
 ): Promise<HypixelStatsResponse> {
   try {
     const data = await getHypixelStatsRaw(uuid, apiKey);
