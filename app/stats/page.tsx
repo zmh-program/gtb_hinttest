@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, Suspense } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Search, User, Key, AlertCircle, Loader2 } from "lucide-react";
+import { Search, User, Key, AlertCircle, Loader2, Download } from "lucide-react";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -83,19 +83,19 @@ function StatsDisplay({ stats }: { stats: any }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-center justify-between">
         <div className="flex items-center gap-3">
           {avatarUrls && (
-            <div className="flex items-center">
+            <div className="flex items-center flex-shrink-0">
               <img
                 src={avatarUrls.head}
                 alt={`${stats.displayname}'s head`}
-                className="w-8 h-8 rounded-md"
+                className="w-8 h-8 rounded-md flex-shrink-0"
                 loading="lazy"
               />
             </div>
           )}
-          <h2 className="text-xl font-bold">{stats.displayname}</h2>
+          <h2 className="text-xl font-bold break-all whitespace-pre-wrap">{stats.displayname}</h2>
         </div>
         {mainMode && (
           <span className="text-sm font-medium bg-primary/10 text-primary px-2 py-1 rounded">
@@ -232,6 +232,7 @@ function StatsContent() {
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [downloadLoading, setDownloadLoading] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -310,11 +311,47 @@ function StatsContent() {
     }
   }
 
+  async function downloadStatsImage() {
+    if (!stats || !apiKey) return;
+    
+    setDownloadLoading(true);
+    try {
+      const response = await fetch("/api/stats_img", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          apiKey: apiKey,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate image");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${username}-stats.png`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to download image");
+    } finally {
+      setDownloadLoading(false);
+    }
+  }
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col row-start-2 items-center w-full max-w-xl space-y-6">
         <h1 className="text-2xl font-bold mb-2.5">
-          Hypixel Build Battle Stats
+          Build Battle Stats
           <ThemeSwitcher />
         </h1>
 
@@ -344,18 +381,33 @@ function StatsContent() {
                 />
               </div>
             </div>
-            <Button
-              onClick={() => fetchStats()}
-              disabled={loading}
-              className="w-full"
-            >
-              {loading ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Search className="h-4 w-4 mr-2" />
+            <div className="flex gap-2">
+              <Button
+                onClick={() => fetchStats()}
+                disabled={loading}
+                className="flex-1"
+              >
+                {loading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Search className="h-4 w-4 mr-2" />
+                )}
+                {loading ? "Searching..." : "Search"}
+              </Button>
+              {stats && (
+                <Button 
+                  onClick={downloadStatsImage}
+                  disabled={downloadLoading}
+                  variant="outline"
+                >
+                  {downloadLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                </Button>
               )}
-              {loading ? "Searching..." : "Search"}
-            </Button>
+            </div>
           </div>
 
           {error && <ErrorMessage message={error} />}
