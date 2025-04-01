@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -28,7 +28,7 @@ function StatsDisplay({ stats }: { stats: any }) {
     async function fetchAvatars() {
       try {
         const response = await fetch(
-          `/api/avatar?username=${stats.displayname}`,
+          `/api/avatar/${stats.displayname}`,
         );
         const data = await response.json();
         if (data.allUrls) {
@@ -40,11 +40,6 @@ function StatsDisplay({ stats }: { stats: any }) {
     }
     fetchAvatars();
   }, [stats.displayname]);
-
-  const formatDate = (timestamp: number) => {
-    if (!timestamp) return "Never";
-    return new Date(timestamp).toLocaleDateString();
-  };
 
   const winPercentage = useMemo(() => {
     if (!bbStats.games_played || bbStats.games_played === 0) return 0;
@@ -62,12 +57,11 @@ function StatsDisplay({ stats }: { stats: any }) {
     return (bbStats.correct_guesses / bbStats.wins_guess_the_build).toFixed(2);
   }, [bbStats.correct_guesses, bbStats.wins_guess_the_build]);
 
-  const acwValue = useMemo(() => {
-    if (Number(cwValue) === 0) return 0;
-    return (Number(averagePoint) / Number(cwValue)).toFixed(2);
-  }, [bbStats.correct_guesses, bbStats.games_played]);
+  // const acwValue = useMemo(() => {
+  //   if (Number(cwValue) === 0) return 0;
+  //   return (Number(averagePoint) / Number(cwValue)).toFixed(2);
+  // }, [bbStats.correct_guesses, bbStats.games_played]);
 
-  // Calculate total wins for each mode
   const bbTotalWins =
     (bbStats.wins_solo_normal || 0) +
     (bbStats.wins_teams_normal || 0) +
@@ -75,7 +69,6 @@ function StatsDisplay({ stats }: { stats: any }) {
   const gtbTotalWins = bbStats.wins_guess_the_build || 0;
   const spbTotalWins = bbStats.wins_speed_builders || 0;
 
-  // Determine main mode
   const mainMode = useMemo(() => {
     const modes = [
       { name: "BB", wins: bbTotalWins },
@@ -233,7 +226,7 @@ function StatsDisplay({ stats }: { stats: any }) {
   );
 }
 
-export default function Stats() {
+function StatsContent() {
   const [username, setUsername] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [loading, setLoading] = useState(false);
@@ -376,5 +369,13 @@ export default function Stats() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function Stats() {
+  return (
+    <Suspense fallback={<div />}>
+      <StatsContent />
+    </Suspense>
   );
 }
